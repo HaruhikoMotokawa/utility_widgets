@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
 
-/// ボトムシートの土台
-class ActionBottomSheet extends StatelessWidget {
+/// アクションを選択するためのボトムシート
+///
+/// staticメソッド[show]を使って表示する
+/// [show]メソッドの引数には[ActionItem]のリストを渡す
+/// [ActionItem]はアイコン、テキスト、戻り値を持つ
+/// 戻り値は[ActionBottomSheet]を表示した際に選択された[ActionItem]の戻り値
+///
+class ActionBottomSheet<T> extends StatelessWidget {
   const ActionBottomSheet({
     required this.actions,
     super.key,
   });
 
-  /// アクションは別に受け取るようにする
   final List<ActionItem> actions;
 
-  /// staticで宣言したボトムシートの原型
-  ///
-  /// 今回は[show]メソッドはわず、[showActionBottomSheet]使っている。
-  /// どちらでも良い。
-  static Future<void> show(
+  static Future<T?> show<T>(
     BuildContext context, {
-    required List<ActionItem> actions,
+    required List<ActionItem<T>> actions,
   }) async {
-    await showModalBottomSheet<void>(
+    return showModalBottomSheet<T>(
       context: context,
       useRootNavigator: true,
       showDragHandle: true,
+      useSafeArea: true,
+      isScrollControlled: true,
       builder: (context) {
-        return ActionBottomSheet(actions: actions);
+        return ActionBottomSheet<T>(actions: actions);
       },
     );
   }
@@ -32,27 +35,25 @@ class ActionBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
-      child: Column(
+      child: ListView(
+        shrinkWrap: true,
         children: actions,
       ),
     );
   }
 }
 
-/// [ActionBottomSheet]にのせる選択肢
-class ActionItem extends StatelessWidget {
+class ActionItem<T> extends StatelessWidget {
   const ActionItem({
     required this.icon,
     required this.text,
-    this.onTap,
+    this.returnValue,
     super.key,
   });
 
   final IconData icon;
   final String text;
-
-  /// タップ処理を後で書きたい時のためにあえてnull許容にする
-  final VoidCallback? onTap;
+  final T? returnValue;
 
   @override
   Widget build(BuildContext context) {
@@ -67,12 +68,7 @@ class ActionItem extends StatelessWidget {
           text,
           style: Theme.of(context).textTheme.titleLarge,
         ),
-        onTap: () {
-          // ここでボトムシートを閉じることは確定させておく
-          Navigator.pop(context);
-          // ここで引数に入った場合は処理が呼ばれる
-          onTap?.call();
-        },
+        onTap: () => Navigator.pop(context, returnValue),
       ),
     );
   }
