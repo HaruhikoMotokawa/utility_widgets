@@ -1,7 +1,4 @@
 library utility_widgets;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/action_bottom_sheet.dart';
+export 'src/custom_snack_bar.dart';
