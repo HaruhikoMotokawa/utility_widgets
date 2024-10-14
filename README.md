@@ -15,7 +15,10 @@
 
 ```yaml
 dependencies:
-  utility_widgets: ^0.0.1
+  utility_widgets:
+    git:
+      url: https://github.com/HaruhikoMotokawa/utility_widgets.git
+      ref: v1.0.0
 ```
 
 ## 使用例
